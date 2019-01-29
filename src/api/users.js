@@ -69,7 +69,7 @@ apiUsers.post('/login', (req, res) =>
       })
     : loginUser(req.body)
         .then(user => {
-          const token = jwt.encode({ id: user.id }, process.env.JWT_SECRET);
+          const token = jwt.encode({ id: user[0].id }, process.env.JWT_SECRET);
           return res.status(200).send({
             success: true,
             token: `JWT ${token}`,
@@ -99,16 +99,16 @@ apiUsersProtected.get('/', (req, res) =>
 
 
 apiUsersProtected.put('/', (req, res) =>
-  !req.body.firstName && !req.body.lastName
+  !req.body.id && !req.body.firstname && !req.body.lastname
     ? res.status(400).send({
       success: false,
-      message: 'Id firstname lastname require'
+      message: 'Identifier, firstname and lastname is require'
     })
-    : updateUser(req.body)
+    : updateUser(req.user.id, req.body)
       .then(user => res.status(200).send({
         success: true,
         profile: user,
-        message: 'update user'
+        message: 'modify info of logged user'
       }))
       .catch(err => {
         logger.error(`💥 Failed to update user : ${err.stack}`);

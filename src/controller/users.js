@@ -55,18 +55,16 @@ const updateUser = (id, { firstname, lastname }) =>
   Users.update(
     { firstName: firstname || '', lastName: lastname || ''},
     { where: {id} }
-  ).then(value => {
-    const user = value[1][0].dataValues;
-
-    return user && !user.deletedAt ? omit(user) : Promise.reject(new Error('UNKOWN OR DELETED USER'))
-  });
+  ).then(value =>
+      value > 0 ? 'user update' : Promise.reject(new Error('UNKNOWN OR DELETED USER (update)'))
+    );
 
 const deleteUser = ({ id }) =>
   Users.destroy(
     { where: {id} }
-  ).then(value =>  {
-    omit(value[0].dataValues);
-  });
+  ).then(value =>
+    value > 0 ? 'user delete' : Promise.reject(new Error('UNKNOWN OR DELETED USER (update)'))
+  );
 
 module.exports = {
   createUser,
